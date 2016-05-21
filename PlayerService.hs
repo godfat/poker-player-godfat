@@ -36,9 +36,9 @@ handler request respond = if methodPost == requestMethod request
   where
     parseJSON = eitherDecode' . fromStrict
     sayVersion = ok $ version
-    ok = (send status200) . L.pack
-    badRequest = send status400 . L.pack . ("Bad request: " ++)
-    send status = respond . responseLBS status headers
+    ok = send status200
+    badRequest = send status400 . ("Bad request: " ++)
+    send status = respond . responseLBS status headers . L.pack
     headers = [ (hServer, B.pack "Haskell Lean Poker Player")
               , (hContentType, B.pack "text/plain") ]
 
