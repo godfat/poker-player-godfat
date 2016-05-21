@@ -29,14 +29,14 @@ handler request respond = if methodPost == requestMethod request
     case B.unpack action of
       "check"       -> sayVersion
       "version"     -> sayVersion
-      "bet_request" -> withState $ \s -> betRequest s >>= ok . L.pack . show
-      "showdown"    -> withState $ \s -> showdown s >> ok (L.pack "")
+      "bet_request" -> withState $ \s -> betRequest s >>= ok . show
+      "showdown"    -> withState $ \s -> showdown s >> ok ""
       _             -> badRequest "unknown action"
   else sayVersion
   where
     parseJSON = eitherDecode' . fromStrict
-    sayVersion = ok $ L.pack $ version
-    ok = send status200
+    sayVersion = ok $ version
+    ok = (send status200) . L.pack
     badRequest = send status400 . append (L.pack "Bad request: ") . L.pack
     send status = respond . responseLBS status headers
     headers = [ (hServer, B.pack "Haskell Lean Poker Player")
