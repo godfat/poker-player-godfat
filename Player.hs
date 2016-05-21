@@ -4,7 +4,7 @@ import Data.Aeson (Object)
 
 
 version :: String
-version = "Default Haskell folding player"
+version = "Fixed Haskell folding player"
 
 betRequest :: Object -> IO Int
 betRequest gameState = return 0
