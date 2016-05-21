@@ -1,3 +1,4 @@
+
 import Control.Applicative ((<$>))
 import Data.Aeson (eitherDecode', Object)
 import Data.ByteString.Lazy (append, fromStrict)
@@ -11,7 +12,6 @@ import System.Environment (lookupEnv)
 
 import Player
 
-
 main :: IO ()
 main = do
   port <- maybe 8080 read <$> lookupEnv "PORT"
@@ -22,9 +22,9 @@ handler :: Application
 handler request respond = if methodPost == requestMethod request
   then do
     (params, _) <- parseRequestBody lbsBackEnd request
-    let getParam n v = maybe v id $ lookup n params
-        action       = getParam (B.pack "action") (B.pack "version")
-        state        = parseJSON $ getParam (B.pack "game_state") (B.pack "{}") :: Either String Object
+    let getParam n v = maybe (B.pack v) id $ lookup (B.pack n) params
+        action       = getParam "action" "version"
+        state        = parseJSON $ getParam "game_state" "{}" :: Either String Object
         withState f  = either badRequest f state
     case B.unpack action of
       "check"       -> sayVersion
