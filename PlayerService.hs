@@ -22,9 +22,8 @@ handler :: Application
 handler request respond = if methodPost == requestMethod request
   then do
     (params, _) <- parseRequestBody lbsBackEnd request
-    let getParam n v = maybe (B.pack v) id $ lookup (B.pack n) params
-        action       = B.unpack $ getParam "action" "version"
-        state        = parseJSON $ getParam "game_state" "{}" :: Either String Object
+    let action       = B.unpack $ getParam "action" "version" params
+        state        = parseJSON $ getParam "game_state" "{}" params :: Either String Object
         withState f  = either badRequest f state
     case action of
       "check"       -> sayVersion
@@ -42,3 +41,4 @@ handler request respond = if methodPost == requestMethod request
     headers = [ (hServer, B.pack "Haskell Lean Poker Player")
               , (hContentType, B.pack "text/plain") ]
 
+getParam n v params = maybe (B.pack v) id $ lookup (B.pack n) params
