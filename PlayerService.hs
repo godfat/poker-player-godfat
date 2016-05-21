@@ -23,10 +23,10 @@ handler request respond = if methodPost == requestMethod request
   then do
     (params, _) <- parseRequestBody lbsBackEnd request
     let getParam n v = maybe (B.pack v) id $ lookup (B.pack n) params
-        action       = getParam "action" "version"
+        action       = B.unpack $ getParam "action" "version"
         state        = parseJSON $ getParam "game_state" "{}" :: Either String Object
         withState f  = either badRequest f state
-    case B.unpack action of
+    case action of
       "check"       -> sayVersion
       "version"     -> sayVersion
       "bet_request" -> withState $ \s -> betRequest s >>= ok . show
